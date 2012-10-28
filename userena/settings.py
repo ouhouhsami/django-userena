@@ -3,6 +3,7 @@
 # Please consult the docs for more information about each setting.
 
 from django.conf import settings
+
 gettext = lambda s: s
 
 
@@ -95,3 +96,5 @@ USERENA_PROFILE_DETAIL_TEMPLATE = getattr(
     settings, 'USERENA_PROFILE_DETAIL_TEMPLATE', 'userena/profile_detail.html')
 
 USERENA_HIDE_EMAIL = getattr(settings, 'USERENA_HIDE_EMAIL', False)
+
+USERENA_SIGNUP_MODEL = getattr(settings, 'USERENA_SIGNUP_MODEL', 'userena.UserenaSignup')

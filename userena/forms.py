@@ -5,14 +5,14 @@ from django.contrib.auth.models import User
 from django.utils.hashcompat import sha_constructor
 
 from userena import settings as userena_settings
-from userena.models import UserenaSignup
-from userena.utils import get_profile_model
+from userena.utils import get_profile_model, get_signup_model
 
 import random
 
 attrs_dict = {'class': 'required'}
 
 USERNAME_RE = r'^[\.\w]+$'
+
 
 class SignupForm(forms.Form):
     """
@@ -49,7 +49,7 @@ class SignupForm(forms.Form):
         except User.DoesNotExist:
             pass
         else:
-            if UserenaSignup.objects.filter(user__username__iexact=self.cleaned_data['username']).exclude(activation_key=userena_settings.USERENA_ACTIVATED):
+            if get_signup_model().objects.filter(user__username__iexact=self.cleaned_data['username']).exclude(activation_key=userena_settings.USERENA_ACTIVATED):
                 raise forms.ValidationError(_('This username is already taken but not confirmed. Please check you email for verification steps.'))
             raise forms.ValidationError(_('This username is already taken.'))
         if self.cleaned_data['username'].lower() in userena_settings.USERENA_FORBIDDEN_USERNAMES:
@@ -59,7 +59,7 @@ class SignupForm(forms.Form):
     def clean_email(self):
         """ Validate that the e-mail address is unique. """
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
-            if UserenaSignup.objects.filter(user__email__iexact=self.cleaned_data['email']).exclude(activation_key=userena_settings.USERENA_ACTIVATED):
+            if get_signup_model().objects.filter(user__email__iexact=self.cleaned_data['email']).exclude(activation_key=userena_settings.USERENA_ACTIVATED):
                 raise forms.ValidationError(_('This email is already in use but not confirmed. Please check you email for verification steps.'))
             raise forms.ValidationError(_('This email is already in use. Please supply a different email.'))
         return self.cleaned_data['email']
@@ -82,7 +82,7 @@ class SignupForm(forms.Form):
                                      self.cleaned_data['email'],
                                      self.cleaned_data['password1'])
 
-        new_user = UserenaSignup.objects.create_user(username,
+        new_user = get_signup_model().objects.create_user(username,
                                                      email,
                                                      password,
                                                      not userena_settings.USERENA_ACTIVATION_REQUIRED,

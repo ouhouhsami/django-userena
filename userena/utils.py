@@ -144,3 +144,14 @@ def get_datetime_now():
         return timezone.now() # pragma: no cover
     except ImportError: # pragma: no cover
         return datetime.datetime.now()
+
+
+def get_signup_model():
+    """
+    Return the model class for signup,
+    as defined in ``USERENA_SIGNUP_MODEL`` setting.
+
+    :return: The model that is used as profile.
+    """
+    signup_mod = get_model(*settings.USERENA_SIGNUP_MODEL.split('.'))
+    return signup_mod

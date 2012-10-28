@@ -15,10 +15,9 @@ from django.http import HttpResponseForbidden, Http404
 
 from userena.forms import (SignupForm, SignupFormOnlyEmail, AuthenticationForm,
                            ChangeEmailForm, EditProfileForm)
-from userena.models import UserenaSignup
 from userena.decorators import secure_required
 from userena.backends import UserenaAuthenticationBackend
-from userena.utils import signin_redirect, get_profile_model
+from userena.utils import signin_redirect, get_profile_model, get_signup_model
 from userena import signals as userena_signals
 from userena import settings as userena_settings
 
@@ -172,7 +171,7 @@ def activate(request, activation_key,
         context. Default to an empty dictionary.
 
     """
-    user = UserenaSignup.objects.activate_user(activation_key)
+    user = get_signup_model().objects.activate_user(activation_key)
     if user:
         # Sign the user in.
         auth_user = authenticate(identification=user.email,
@@ -224,7 +223,7 @@ def email_confirm(request, confirmation_key,
         ``template_name``.
 
     """
-    user = UserenaSignup.objects.confirm_email(confirmation_key)
+    user = get_signup_model().objects.confirm_email(confirmation_key)
     if user:
         if userena_settings.USERENA_USE_MESSAGES:
             messages.success(request, _('Your email address has been changed.'),

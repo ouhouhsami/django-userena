@@ -77,6 +77,7 @@ class UserenaSignup(models.Model):
     class Meta:
         verbose_name = _('userena registration')
         verbose_name_plural = _('userena registrations')
+        abstract = True
 
     def __unicode__(self):
         return '%s' % self.user.username
